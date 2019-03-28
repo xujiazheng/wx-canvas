@@ -1,0 +1,20 @@
+{
+  "name": "wx-canvas",
+  "version": "1.0.0",
+  "description": "微信小程序canvas绘图组件",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xujiazheng/wx-canvas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xujiazheng/wx-canvas/issues"
+  },
+  "homepage": "https://github.com/xujiazheng/wx-canvas#readme"
+}
