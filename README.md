@@ -1,224 +1,280 @@
+## canvas-paint
 
-# canvas基础组件使用规则
-微信小程序canvas绘图组件
+小程序canvas绘图组件，es6语法。
+_ _ _
 
-## 组件使用
++ [安装](#安装)
++ [用法](#用法)
++ [文档](#文档)
+    + [参数](#参数)
+        + [config](#config)
+            + [文本](#绘制文本)
+            + [图片](#绘制图片)
+            + [填充区块](#绘制填充区块)
+            + [线条区块](#绘制线条区块)
+            + [圆角矩形](#绘制圆角矩形)
+    + [事件](#事件)
++ [联系我们](#联系我们)
 
-1. 复制此组件wx-canvas到项目中；
-2. 在页面中注册组件
+_ _ _
+
+## 安装
 
 ```bash
-{
-    "usingComponents": {
-        "wx-canvas": "/component/wx-canvas/wx-canvas" # 组件的路径
-    }
-}
-```
-3. 在页面调用组件
-```bash
-<wx-canvas width="375" height="665" id="myCanvas" canvasId="myCanvas" bindcreated="onHandleCreate" config="{{canvasConfig}}"></wx-canvas>
-```
-4. js中给赋值canvas的配置canvasConfig
-```bash
-const canvasConfig = {
-    # canvas绘制的所有描述对象
-    config: {
-        background: {
-            type: 'rect', x: 0, y: 0, width: 250, height: 300, color: '#dddddd',
-        },
-        title: {
-            type: 'text', text: '这是一个标题', x: 100, y: 10, size: 14, color: '#ff0000',
-        },
-        img: {
-            type: 'image', src: 'http://xxx', x: 100, y: 100, width: 83, height: 45,
-        },
-        priceBox: {
-            type: 'box', x: 100, y: 160, width: 100, height: 40, radius: 20, color: '#aaa',
-        },
-        price: {
-            type: 'text', text: '¥10.5', x: 120, y: 170, size: 16, color: '#ffffff',
-        },
-    },
-    # canvas绘制顺序数组。
-    order: ['background', 'title', 'img', 'priceBox', 'price'],
-}
-this.setData({
-    canvasConfig,
-});
+$ npm clone https://github.com/xujiazheng/wx-canvas.git
 ```
 
-5. js中注册onHandleCreate函数接收绘制好的图片临时文件
-```bash
-
-onHandleCreate(e) {
-    let imgPath = e.detail.path; # 绘制好的图片临时文件路径
-}
-```
-
-## 组件传值
-
-1.  config(canvas画布的数据配置)
-> 承载的所有画布需要绘制的配置项
+## 用法
 
 ```javascript
-# 数据如下：
-// 传给组件的配置config
-const canvasConfig = {
-    // canvas绘制的所有描述对象
-    config: {
-        background: {
-            type: 'rect', x: 0, y: 0, width: 250, height: 300, color: '#dddddd',
-        },
-        title: {
-            type: 'text', text: '这是一个标题', x: 100, y: 10, size: 14, color: '#ff0000',
-        },
-        img: {
-            type: 'image', src: 'http://xxx', x: 100, y: 100, width: 83, height: 45,
-        },
-        priceBox: {
-            type: 'box', x: 100, y: 160, width: 100, height: 40, radius: 20, color: '#aaa',
-        },
-        price: {
-            type: 'text', text: '¥10.5', x: 120, y: 170, size: 16, color: '#ffffff',
-        },
-    },
-    // canvas绘制顺序数组。
-    order: ['background', 'title', 'img', 'priceBox', 'price'],
-};
-```
-
-### 绘制笔画的描述如下：
-
-* 图片
-> type必须为'image'，拥有一下属性。其中src为网络图片url，image为本地图片路径。
-
-```bash
+// 1. 目标页面json中注册
 {
-    type: 'image',
-    src: 'http://xxxx',
-    x: 0,
-    y: 0,
-    width: 300,
-    height: 200,
+    "usingComponents": {
+        "canvas-paint": "./wx-canvas"
+    }
 }
-# 或者
-icon: {
+
+// 2. view中使用组件
+<canvas-paint failover="false" width="210" height="168" id="shareCart" binderror="onHandleShareCartError" bindcreated="onHandleShareCartCreated" config="{{canvasConfig}}"></canvas-paint>
+
+// 3. js中赋值
+const textDescription = {
+    text: '这是一个标题',
+    color: '#ff0000', // 颜色
+    x: 48, // x坐标
+    y: 344, // y坐标
+    size: 16, // 文本大小
+    type: 'text',
+};
+const localImageDescription = {
     type: 'image',
-    image: '本地图片路径',
+    image: '/image/icon.png', // 本地图片路径
     x: 21,
     y: 0,
     width: 168,
     height: 168,
-}
-```
-* 文本
-> type必须为text， 包含数据如下。
+};
 
-```bash
-{
-    text: '',
-    color: '',
-    x: 48 / 2,
-    y: 822 / 2,
-    size: '',
+const canvasConfig = [
+    textDescription,
+    localImageDescription,
+];
+this.setData({
+    canvasConfig,
+});
+```
+_ _ _
+
+## 文档
+
+### 参数
+| 入参 | 类型 | 默认值 | 必填 | 说明 |
+| :------- | :------ | :-------- | :------- | :------ |
+| config | Array[Object] | [] | 是 | 绘制canvas的数据 |
+| useSave | Boolean | false | 否 | 图片文件是否需要保存到本地 |
+| width | Number | - | 是 | canvas画布的宽度 |
+| height | Number | - | 是 | canvas画布的高度 |
+| failover | Boolean | true | 否 | 是否开启容错，关闭容错后，绘制图片发生错误会终止绘制并触发error事件。如果开启容错，则绘制图片发生错误会继续绘制导出图片。 |
+
+#### config
+
+绘制canvas所需数据的数组，绘制类型有文本、图片、填充区块、线条区块、圆角矩形，例如：
+
+```javascript
+const canvasConfig = [
+    {
+        text: '这是一个标题',
+        color: '#ff0000', // 颜色
+        x: 48, // x坐标
+        y: 344, // y坐标
+        size: 16, // 文本大小
+        type: 'text',
+    },
+    {
+        type: 'image',
+        image: '/image/icon.png', // 本地图片路径
+        x: 21,
+        y: 0,
+        width: 168,
+        height: 168,
+    }
+]
+```
+
+##### 绘制文本
+
+type必须为text。
+
+| 属性 | 类型 | 默认值 | 必填 | 说明 |
+| :----- | :----- | :----- | :----- | :------ |
+| type | String | - | true | 必须为'text' |
+| color | String | - | true | 字体颜色 |
+| size | Number | - | true | 字体大小 |
+| x | Number | - | true | x坐标 |
+| y | Number | - | true | y坐标 |
+
+```javascript
+const textDescription = {
+    text: '这是一个标题',
+    color: '#ff0000', // 颜色
+    x: 48, // x坐标
+    y: 344, // y坐标
+    size: 16, // 文本大小
     type: 'text',
-}
+};
 ```
-* 填充区块
-> type必须为rect，此区块为颜色填充的图案，包含数据如下：
 
-```bash
-{
+##### 绘制图片
+
+type必须为image。
+
+| 属性 | 类型 | 默认值 | 必填 | 说明 |
+| :----- | :----- | :----- | :----- | :------ |
+| type | String | - | true | 必须为'image' |
+| width | Number | - | true | 图片宽度 |
+| height | Number | - | true | 图片宽度 |
+| x | Number | - | true | x坐标 |
+| y | Number | - | true | y坐标 |
+| src | String | - | false | 网络图片地址，src/image必须存在一个 |
+| image | String | - | false | 本地图片路径，同上 |
+
+```javascript
+// 绘制网络图片
+const onLineImageDescription = {
+    type: 'image',
+    src: 'http://h0.hucdn.com/open201912/5d6938d94962770f_154x88.png', // 网络图片路径
+    x: 0,
+    y: 0,
+    width: 154,
+    height: 88,
+};
+// 绘制本地图片
+const localImageDescription = {
+    type: 'image',
+    image: '/image/icon.png', // 本地图片路径
+    x: 21,
+    y: 0,
+    width: 168,
+    height: 168,
+};
+// 绘制圆形图片
+const circularImageDescription = {
+    type: 'image',
+    src: 'http://h0.hucdn.com/open201914/f59128d045720f4b_150x150.png', // 网络图片路径
+    x: 0,
+    y: 0,
+    width: 150,
+    height: 150,
+    radius: 1, // 是否为圆形，1为是，0为否
+};
+```
+
+##### 绘制填充区块
+
+type必须为rect。
+
+| 属性 | 类型 | 默认值 | 必填 | 说明 |
+| :----- | :----- | :----- | :----- | :------ |
+| type | String | - | true | 必须为'rect' |
+| width | Number | - | true | 图片宽度 |
+| height | Number | - | true | 图片宽度 |
+| x | Number | - | true | x坐标 |
+| y | Number | - | true | y坐标 |
+| color | String | - | true | 填充颜色 |
+
+```javascript
+const rectDescription = {
     color: 'white',
     x: 0,
     y: 0,
     width: 210,
     height: 168,
     type: 'rect',
-}
+};
 ```
-* 线条区块
-> type必须为line，此区块为线条画出的图案，包含数据如下：
 
-```bash
-{
-    color: 'white',
-    x: 10,
-    y: 20,
-    width: 100,
-    height: 80,
+##### 绘制线条区块
+
+type必须为line。
+
+| 属性 | 类型 | 默认值 | 必填 | 说明 |
+| :----- | :----- | :----- | :----- | :------ |
+| type | String | - | true | 必须为'line' |
+| width | Number | - | true | 图片宽度 |
+| height | Number | - | true | 图片宽度 |
+| x | Number | - | true | x坐标 |
+| y | Number | - | true | y坐标 |
+| color | String | - | true | 线条颜色 |
+
+```javascript
+const rectDescription = {
+    color: '#000000',
+    x: 0,
+    y: 0,
+    width: 210,
+    height: 168,
     type: 'line',
-}
+};
 ```
 
-* 圆角矩形区块
-> type 必须为box，此区块可以绘制圆角图片也可以绘制圆角填充矩形。异可以绘制普通的矩形和图片
+##### 绘制圆角矩形
 
-```bash
-{
+type必须为box。此区块可以绘制圆角任意值的填充区块和图片。
+
+| 属性 | 类型 | 默认值 | 必填 | 说明 |
+| :----- | :----- | :----- | :----- | :------ |
+| type | String | - | true | 必须为'box' |
+| width | Number | - | true | 图片宽度 |
+| height | Number | - | true | 图片宽度 |
+| x | Number | - | true | x坐标 |
+| y | Number | - | true | y坐标 |
+| src | String | - | false | 网络图片地址，src/image/color 必须存在一个 |
+| image | String | - | false | 本地图片路径 |
+| color | String | - | false | 填充颜色 |
+
+```javascript
+// 普通的填充区块
+const normalRectDescription = {
     type: 'box',
     x: 0,
     y: 0,
     width: 100,
     height: 100,
-    color: '#ff0000'
-}
-# 或者
-{
+    color: '#ff0000',
+};
+// 普通的网络图片（本地图片雷同image类型）
+const normalImageDescription = {
+    type: 'box',
+    x: 0,
+    y: 0,
+    width: 150,
+    height: 150,
+    src: 'http://h0.hucdn.com/open201914/8f9fb378a6fcd512_150x150.png',
+};
+// 带圆角的填充矩形
+const radiusRectDescription = {
     type: 'box',
     x: 0,
     y: 0,
     width: 100,
     height: 100,
-    src: 'http://xxxx',
-}
-# 或者
-{
-    type: 'box',
-    x: 0,
-    y: 0,
-    width: 100,
-    height: 100,
-    image: '本地图片路径',
-}
+    color: '#ff0000',
+};
 ```
 
-2. canvasId（cnavas的唯一id值）
-> 可传递canvas的id
+### 事件
 
-3. useSave(保存输出的图片文件到本地)
-> 如果需要将canvas输出的图片文件保存到本地就传递值为true
-
-4. width（canvas的宽度）
-
-5. height(canvas的高度)
-
-6. hasError（是否需要处理错误）：默认false
-> 如果传递为true，需要绑定error事件来处理错误;
-
-### 事件绑定
-
-* bindcreated
-> 绑定此事件，canvas绘制完成后会触发事件，并传值图片路径（临时文件，一次会话生效）。
-
-* bindsaved
-> 绑定此事件，canvas绘制完成并保存后触发事件，并传值图片路径（本地文件）。以上两者互斥，useSave为true则需要绑定bindsaved
-
-* binderror
-> 绑定错误事件，组件遇到错误会触发此回调
+| 事件名 | 说明 | 参数 |
+| :--- | :---- | :---- |
+| created | canvas绘制完成后触发回调 | e，事件对象，e.detail.path可以拿到临时文件路径。 |
+| saved | 当useSave为true时,canvas绘制完成后会保存文件到本地并触发此回调函数 | e，事件对象，e.detail.path可以拿到本地文件路径。 | 
+| error | 当failover为false时，绘制发生错误会触发回调。 | e，事件对象。 
+|
 
 
-## 注意事项
+## 联系我们
+| 作者 | 邮箱 |
+| :--- | :--- |
+|徐嘉正 | 18397968326@163.com |
 
-* 组件提供了文字测量方法measureText可以测量文字长度
-```bash
-
-let canvas = this.selectComponent('#myCanvas') # 传递组件的id查找组件实例
-canvas.measureText('你好，世界', 16) # 传递文本和文本size，返回测量结果。
-
-```
-
-* 对于文字或者区块填充颜色带有透明度的，canvas会默认将全局透明度设置为相应的数值，并且
-后来的描述绘制也会遵循此透明度。如果要不透明度，需要全局设置回1.调用setGlobalAlpha方法，目前考虑没有必要添加。
-
-* 由于微信小程序canvas绘制在安卓机会出现文字或位置错乱等现象。是官网底层的实现问题，已给官方提了bug。
+Issue: [https://github.com/xujiazheng/wx-canvas/issues](https://github.com/xujiazheng/wx-canvas/issues)

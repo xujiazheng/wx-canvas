@@ -1,8 +1,16 @@
 const skynet = getApp().monitor;
 // 填充文本
 export const fillText = (ctx, {
-    color, size, text, x, y, align = 'left',
+    color,
+    size,
+    text,
+    x,
+    y,
+    align = 'left',
 }) => {
+    if (!text) {
+        return;
+    }
     ctx.setFillStyle(color);
     ctx.setFontSize(size);
     ctx.setTextAlign(align);
@@ -11,7 +19,11 @@ export const fillText = (ctx, {
 
 // 画线条图案
 export const drawLine = (ctx, {
-    x, y, width, height, color,
+    x,
+    y,
+    width,
+    height,
+    color,
 }) => {
     ctx.setStrokeStyle(color);
     ctx.strokeRect(x, y, width, height);
@@ -19,7 +31,12 @@ export const drawLine = (ctx, {
 
 // 绘图
 export const drawImage = (ctx, {
-    image, x, y, width, height, radius = 0, // 次radius表示是否为圆形，并不是半径
+    image,
+    x,
+    y,
+    width,
+    height,
+    radius = 0, // 次radius表示是否为圆形，并不是半径
 }) => {
     if (!image) {
         return;
@@ -37,7 +54,11 @@ export const drawImage = (ctx, {
 
 // 画区块
 export const fillRect = (ctx, {
-    color, x, y, width, height,
+    color,
+    x,
+    y,
+    width,
+    height,
 }) => {
     ctx.setFillStyle(color);
     ctx.fillRect(x, y, width, height);
@@ -45,7 +66,11 @@ export const fillRect = (ctx, {
 
 // 圆角矩形区域裁剪函数
 const clipRect = (ctx, {
-    x, y, w, h, r,
+    x,
+    y,
+    w,
+    h,
+    r,
 }) => {
     // 左上角
     ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
@@ -70,10 +95,12 @@ const clipRect = (ctx, {
     ctx.lineTo(x + r, y);
 };
 // 各类矩形绘制，可以绘制填充色圆角矩形/填充色普通矩形（radius = 0），圆角图片/普通图片(radius = 0)
-export const drawRadiusBox = (ctx, {
-    x, y,
+const drawRadiusBox = (ctx, {
+    x,
+    y,
     radius = 0,
-    width, height,
+    width,
+    height,
     color = 'transparent',
     image,
 }) => {
@@ -93,7 +120,11 @@ export const drawRadiusBox = (ctx, {
     ctx.clip();
     if (image) {
         drawImage(ctx, {
-            width, height, x, y, image,
+            width,
+            height,
+            x,
+            y,
+            image,
         });
     }
     ctx.restore();
@@ -176,56 +207,27 @@ export const onlineImageToLocalImage = (imgMap) => {
     return Promise.all(tasks).then(() => resultMap);
 };
 
-// 绘图队列，
-export const drawQueue = {
-    list: [],
-    queue(cb) {
-        this.list.push(cb);
-    },
-    run() {
-        return new Promise((resolve) => {
-            let queue = [Promise.resolve()].concat(this.list);
-            let $q;
-            while (($q = queue.shift())) {
-                if (queue[0]) {
-                    let handleFn = queue[0];
-                    queue[0] = $q.then(() => Promise.resolve().then(() => {
-                        handleFn();
-                    }));
-                }
-            }
-        });
-    },
-};
-
 // 画布开始
 export const drawPoster = ({ctx, data} = {}) => new Promise((resolve) => {
     ctx.setTextBaseline('top');
-    const {
-        config,
-        order,
-    } = data;
     // 遍历所有笔画
-    order.forEach((key) => {
-        let item = config[key];
+    data.forEach((item) => {
         if (item && item.type) {
             let handleObj = HandleTypeMap[item.type];
             if (!handleObj) {
                 return;
             }
             let {handle} = handleObj;
-            drawQueue.queue(() => {
-                handle(ctx, item);
-            });
+            handle(ctx, item);
         }
     });
     // 绘制画布
-    drawQueue.queue(() => {
-        ctx.draw(true, () => {
-            setTimeout(() => {
-                resolve();
-            }, 200);
-        });
+    // 延迟200ms后再resolve，否则会出现输出图片白屏
+    ctx.draw(true, () => {
+        setTimeout(() => {
+            resolve();
+        }, 200);
     });
-    drawQueue.run();
 });
+
+export const getUUID = () => (Date.now()).toString(16);
