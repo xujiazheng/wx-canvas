@@ -74,6 +74,12 @@ const canvasConfig = [
 this.setData({
     canvasConfig,
 });
+
+// 4. 定义绘制完成回调获取图片路径
+onHandleShareCartCreated(e) {
+    let path = e.detail.path; // path则为生成的canvas图片的临时路径
+}
+
 ```
 _ _ _
 
