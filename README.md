@@ -46,10 +46,10 @@ $ git clone https://github.com/xujiazheng/wx-canvas.git
     }
 }
 
-// 2. view中使用组件
+// 2. view中使用组件。传入config绘制数组，绑定created
 <canvas-paint width="210" height="168" id="shareCart" bindcreated="onHandleShareCartCreated" config="{{canvasConfig}}"></canvas-paint>
 
-// 3. js中赋值
+// 3. js中定义绘制对象，则绘制自动开始。
 const textDescription = {
     text: '这是一个标题',
     color: '#ff0000', // 颜色
