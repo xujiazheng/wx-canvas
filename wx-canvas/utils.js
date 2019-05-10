@@ -1,4 +1,3 @@
-const skynet = getApp().monitor;
 // 填充文本
 export const fillText = (ctx, {
     color,
@@ -188,6 +187,7 @@ export const onlineImageToLocalImage = (imgMap) => {
     Object.keys(imgMap).forEach((key) => {
         let imgSrc = imgMap[key];
         tasks.push(new Promise((resolveSub) => {
+            console.log(imgSrc.replace(/^http(?=:)/i, 'https'))
             wx.getImageInfo({
                 src: imgSrc.replace(/^http(?=:)/i, 'https'),
                 success(res) {
@@ -197,9 +197,6 @@ export const onlineImageToLocalImage = (imgMap) => {
                 fail(err) {
                     resultMap[key] = '';
                     resolveSub('');
-                    skynet.error(JSON.stringify(err), {
-                        url: imgSrc.replace(/^http(?=:)/i, 'https'),
-                    });
                 },
             });
         }));

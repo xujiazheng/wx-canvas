@@ -1,2 +1,2 @@
 
-<canvas canvas-id="{{canvasId}}" style="position:fixed; top: -999px; left: -999px; width: {{width}}px; height: {{height}}px;"></canvas>
+<canvas canvas-id="{{canvasId}}" style="position:fixed; top: {{top}}px; left: {{left}}px; width: {{width}}px; height: {{height}}px;"></canvas>

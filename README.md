@@ -4,6 +4,7 @@
 _ _ _
 
 + [安装](#安装)
++ [引入](#引入)
 + [用法](#用法)
 + [文档](#文档)
     + [参数](#参数)
@@ -20,8 +21,19 @@ _ _ _
 
 ## 安装
 
+克隆git仓库到本地
+
 ```bash
-$ npm clone https://github.com/xujiazheng/wx-canvas.git
+$ git clone https://github.com/xujiazheng/wx-canvas.git
+```
+
+## 引入
+
+将wx-canvas文件夹拷贝到你的开发目录下
+
+```bash
++ cd wx-canvas
++ cp -r ./wx-canvas 你的项目目录中
 ```
 
 ## 用法
@@ -35,7 +47,7 @@ $ npm clone https://github.com/xujiazheng/wx-canvas.git
 }
 
 // 2. view中使用组件
-<canvas-paint failover="false" width="210" height="168" id="shareCart" binderror="onHandleShareCartError" bindcreated="onHandleShareCartCreated" config="{{canvasConfig}}"></canvas-paint>
+<canvas-paint width="210" height="168" id="shareCart" bindcreated="onHandleShareCartCreated" config="{{canvasConfig}}"></canvas-paint>
 
 // 3. js中赋值
 const textDescription = {
@@ -160,7 +172,7 @@ const localImageDescription = {
 // 绘制圆形图片
 const circularImageDescription = {
     type: 'image',
-    src: 'http://h0.hucdn.com/open201914/f59128d045720f4b_150x150.png', // 网络图片路径
+    src: 'http:xxx', // 网络图片路径
     x: 0,
     y: 0,
     width: 150,
@@ -249,7 +261,7 @@ const normalImageDescription = {
     y: 0,
     width: 150,
     height: 150,
-    src: 'http://h0.hucdn.com/open201914/8f9fb378a6fcd512_150x150.png',
+    src: 'https://xxx',
 };
 // 带圆角的填充矩形
 const radiusRectDescription = {

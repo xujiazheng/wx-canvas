@@ -22,7 +22,6 @@ import {
     measureText,
     getUUID,
 } from './utils';
-
 Component({
     properties: {
         // 原数据
@@ -47,10 +46,24 @@ Component({
             type: Boolean,
             value: true,
         },
+        debug: {
+            type: Boolean,
+            value: false,
+            observer(val) {
+                if (val) {
+                    this.setData({
+                        top: 0,
+                        left: 0,
+                    });
+                }
+            },
+        }
     },
     data: {
         // 生成一个随机id
         canvasId: `canvasId_${getUUID()}`,
+        top: -999,
+        left: -999,
     },
     methods: {
         getContext() {
